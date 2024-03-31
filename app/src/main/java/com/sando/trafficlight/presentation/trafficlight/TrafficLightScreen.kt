@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,9 +21,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sando.trafficlight.domain.TrafficLightColor
+import com.sando.trafficlight.ui.theme.GreenOff
 import com.sando.trafficlight.ui.theme.GreenOn
 import com.sando.trafficlight.ui.theme.OrangeOff
+import com.sando.trafficlight.ui.theme.OrangeOn
 import com.sando.trafficlight.ui.theme.RedOff
+import com.sando.trafficlight.ui.theme.RedOn
 
 @Composable
 fun TrafficLightScreen(
@@ -37,32 +42,51 @@ fun TrafficLightScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = state.value.modelName)
+        Text(text = state.value.modelName, style = MaterialTheme.typography.displayLarge)
 
         Spacer(modifier = Modifier.fillMaxHeight(0.15f))
 
-        LightCircle(color = RedOff, turnedOn = true)
+        LightCircle(
+            activeColor = RedOn,
+            inactiveColor = RedOff,
+            activated = state.value.activeLight == TrafficLightColor.RED
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        LightCircle(color = OrangeOff, turnedOn = true)
+        LightCircle(
+            activeColor = OrangeOn,
+            inactiveColor = OrangeOff,
+            activated = state.value.activeLight == TrafficLightColor.ORANGE
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        LightCircle(color = GreenOn, turnedOn = true)
+        LightCircle(
+            activeColor = GreenOn,
+            inactiveColor = GreenOff,
+            activated = state.value.activeLight == TrafficLightColor.GREEN
+        )
     }
 }
 
 @Composable
 fun LightCircle(
-    color: Color,
-    turnedOn: Boolean
+    activeColor: Color,
+    inactiveColor: Color,
+    activated: Boolean
 ) {
     Box(
         modifier = Modifier
-            .height(50.dp)
+            .height(100.dp)
             .aspectRatio(1f)
             .clip(CircleShape)
-            .background(color)
+            .background(
+                if (activated) {
+                    activeColor
+                } else {
+                    inactiveColor
+                }
+            )
     )
 }
