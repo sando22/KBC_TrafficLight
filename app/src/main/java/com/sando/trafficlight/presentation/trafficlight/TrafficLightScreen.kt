@@ -1,6 +1,9 @@
 package com.sando.trafficlight.presentation.trafficlight
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,9 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -76,17 +81,22 @@ fun LightCircle(
     inactiveColor: Color,
     activated: Boolean
 ) {
+    val animatedColor by animateColorAsState(
+        targetValue = if (activated) {
+            activeColor
+        } else {
+            inactiveColor
+        },
+        animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+        label = "backgroundColorAnimation"
+    )
+
     Box(
         modifier = Modifier
             .height(100.dp)
             .aspectRatio(1f)
             .clip(CircleShape)
-            .background(
-                if (activated) {
-                    activeColor
-                } else {
-                    inactiveColor
-                }
-            )
-    )
+            .drawBehind {
+                drawCircle(animatedColor)
+            })
 }
