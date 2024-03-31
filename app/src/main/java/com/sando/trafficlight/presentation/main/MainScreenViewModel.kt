@@ -1,4 +1,4 @@
-package com.sando.trafficlight.presentation
+package com.sando.trafficlight.presentation.main
 
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
@@ -23,17 +23,17 @@ class MainScreenViewModel(private val savedStateHandle: SavedStateHandle) : View
                         )
                     }
             }
-
-            MainScreenEvent.StartDriving -> {
-                if (screenState.value.modelName.length < MINIMAL_MODEL_NAME_LENGTH) {
-                    savedStateHandle[SAVED_STATE_KEY] =
-                        screenState.value.copy(modelError = true)
-                } else {
-                    //todo transition here
-                }
-            }
         }
     }
+
+    fun checkModelNameValid(): Boolean =
+        if (screenState.value.modelName.length < MINIMAL_MODEL_NAME_LENGTH) {
+            savedStateHandle[SAVED_STATE_KEY] = screenState.value.copy(modelError = true)
+
+            false
+        } else {
+            true
+        }
 
     companion object {
         private const val MINIMAL_MODEL_NAME_LENGTH = 3
@@ -46,10 +46,8 @@ class MainScreenViewModel(private val savedStateHandle: SavedStateHandle) : View
 data class MainScreenState(
     val modelName: String = "",
     val modelError: Boolean = false
-): Parcelable
+) : Parcelable
 
 sealed class MainScreenEvent {
-    data object StartDriving : MainScreenEvent()
-
     data class InputFieldChange(val newText: String) : MainScreenEvent()
 }
